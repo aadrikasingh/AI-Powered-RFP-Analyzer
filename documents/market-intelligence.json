@@ -1,0 +1,37 @@
+{
+    "industries": {
+        "Cloud Computing": {
+            "trends": [
+                "Increased adoption of multi-cloud strategies",
+                "Rising concerns over data sovereignty laws",
+                "Shift towards AI-powered cloud automation"
+            ],
+            "competitor_insights": [
+                "Microsoft Azure dominates market share with 33%, followed by Amazon AWS at 22%.",
+                "Vendors offering specialized AI cloud solutions are gaining traction."
+            ],
+            "supply_chain_risks": [
+                "High dependency on semiconductor manufacturing (chip shortages remain a risk)."
+            ],
+            "regulatory_changes": [
+                "EU's Digital Services Act imposes new compliance rules for cloud providers."
+            ]
+        },
+        "Cybersecurity": {
+            "trends": [
+                "Zero Trust Architecture becoming industry standard",
+                "Rise of AI-powered threat detection solutions"
+            ],
+            "competitor_insights": [
+                "Palo Alto Networks, CrowdStrike, and Fortinet are top competitors.",
+                "Emerging startups are challenging established firms with more cost-effective solutions."
+            ],
+            "supply_chain_risks": [
+                "Shortage of cybersecurity talent leading to increased outsourcing."
+            ],
+            "regulatory_changes": [
+                "New data protection laws in the US and EU are tightening security requirements."
+            ]
+        }
+    }
+}

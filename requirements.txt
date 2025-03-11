@@ -1,0 +1,7 @@
+jinja2
+python-dotenv
+semantic-kernel
+streamlit
+azure-identity
+azure-ai-formrecognizer
+azure-search-documents==11.6.0b7
