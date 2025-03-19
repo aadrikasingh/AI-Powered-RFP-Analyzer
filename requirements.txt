@@ -1,3 +1,4 @@
+fpdf
 jinja2
 openai
 python-dotenv
