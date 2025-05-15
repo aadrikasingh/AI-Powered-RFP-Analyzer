@@ -1,9 +1,13 @@
 import streamlit as st
 import asyncio
 from time import sleep
-from summarization_logic import summarize_document  # Ensure this function works correctly
+from doc_summarization import summarize_document  # Ensure this function works correctly
 import uuid
-#st.set_page_config(layout="wide")
+import os
+from PIL import Image
+
+
+
 st.markdown("""
     <style>
         .st-emotion-cache-1i6lr5d img { 
@@ -16,18 +20,37 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Analyze Button styling
+st.markdown("""
+<style>
+/* Analyze Button Hover */
+.st-key-analyze_button button {
+    transition: all 0.3s ease-in-out;
+}
 
-LOGO_URL_LARGE = "image1.png" 
+.st-key-analyze_button button:hover {
+    box-shadow: 0 0 20px #166ec5;
+    transform: scale(1.30);
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+image_path1 = os.path.join(os.path.dirname(__file__), "static", "image1.png")
+LOGO_URL_LARGE = Image.open(image_path1)
+image_path2 = os.path.join(os.path.dirname(__file__), "static", "image3.png")
+#LOGO_URL_LARGE = "image1.png" 
+ 
 
 st.logo(
     LOGO_URL_LARGE,
-    link="https://streamlit.io/gallery",
     size="large"
     
 )
 col1, col2 = st.columns([1, 3])
 with col1:
-    st.image("image3.png", use_container_width=True) 
+    st.image(image_path2, use_container_width=True) 
 with col2:
     st.title("AI-Powered RFP Analyzer")
 st.markdown('''''')
@@ -116,7 +139,7 @@ if st.session_state.rfp_uploaded:
 if st.session_state.rfp_uploaded and st.session_state.vendor_uploaded:
     st.subheader("Step 3: Multi-Agent Analysis")
 
-    if st.button("Analyze", icon=":material/cycle:",disabled=st.session_state.process_running):
+    if st.button("Analyze", icon=":material/cycle:",disabled=st.session_state.process_running, key="analyze_button"):
         st.session_state.process_running = True  # ✅ Mark process as running
         st.rerun()  # ✅ Rerun to trigger processing
 

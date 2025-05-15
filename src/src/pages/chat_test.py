@@ -1,10 +1,12 @@
 import streamlit as st
+st.set_page_config(layout="wide")
 import asyncio
 import sys
 import os
 from time import sleep
 # Get the absolute path of the parent directory (app/)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# Ensure src directory is in the Python path
 import time
 from plugins.legal_compliance_plugin import LegalCompliancePlugin
 from plugins.vendor_evaluation_plugin import VendorEvaluationPlugin
@@ -22,11 +24,21 @@ from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.contents import ChatHistoryTruncationReducer
 from semantic_kernel.functions import KernelFunctionFromPrompt
 from streamlit_option_menu import option_menu
+from speech import record_audio_with_silence_detection, transcribe_audio_file
+import pathlib
 
 from dotenv import load_dotenv
+
 # Load environment variables
 load_dotenv()
 
+
+def load_css(file_name):  
+    with open(file_name) as f:  
+        st.html(f"<style>{f.read()}</style>")
+
+css_path = pathlib.Path("style.css")
+load_css(css_path)
 
 # Function to initialize the chat system
 async def initialize_chat():
@@ -34,8 +46,10 @@ async def initialize_chat():
     prompt_instructions = get_agent_prompts()
     rfp_summary = st.session_state.rfp_summary_ready
     proposal_summary = st.session_state.vendor_summary_ready
-
-    market_intelligence_dataset = "documents/market-intelligence.json"
+    market_intelligence_dataset = os.path.join(
+    os.path.dirname(__file__), "..", "documents", "market-intelligence.json")
+    #market_intelligence_dataset = "documents/market-intelligence.json"
+    market_intelligence_dataset = os.path.abspath(market_intelligence_dataset)
 
     # For Legal Compliance Agent...
     legal_search_client = SearchClient(endpoint=os.environ.get("AZURE_AI_SEARCH_ENDPOINT"), 
@@ -170,7 +184,7 @@ async def initialize_chat():
     )
     return chat
 
-st.set_page_config(layout="wide")
+
 # Initialize session state for chat
 if "session_uid" not in st.session_state:
     st.warning("❌ No session UID found! Redirecting to home page...")
@@ -181,6 +195,8 @@ if "chat" not in st.session_state:
     st.session_state.chat = None
 if "responses" not in st.session_state:
     st.session_state.responses = []
+
+
 st.markdown("""
     <style>
         .st-emotion-cache-13g75r2 {
@@ -196,16 +212,23 @@ st.markdown("""
 
 container = st.container(border=True)
 
-with st.sidebar :
-    #st.image("image8.png", width=300)  # Add your logo here
+with st.sidebar:
     selected = option_menu(
-        menu_title="Microsoft",  # required
-        options=["chat", "Summaries", "About"],  # required
-        icons=["chat", "book", "info-circle"],  # optional
-        menu_icon="microsoft",  # optional
-        default_index=0,  # optional
-        #orientation="horizontal",
-)
+        menu_title="Microsoft",
+        options=["chat", "Summaries", "About"],
+        icons=["chat", "book", "info-circle"],
+        menu_icon="microsoft",
+        default_index=0,
+    )
+
+    # # Add spacing
+    # st.markdown("---")
+
+
+    # # New Evaluation button
+    # if st.button("### 🔁 Start Over"):
+    #     st.switch_page("main.py")  # Replace with your main page path or logic
+
 
 
 
@@ -233,7 +256,7 @@ AGENT_LOGOS = {
 
 USER_LOGO = "https://cdn.pixabay.com/photo/2016/03/31/17/33/avatar-1293744_1280.png"
 SYSTEM_LOGO = "https://cdn.pixabay.com/photo/2016/03/31/18/43/gear-1294576_1280.png"
-
+image_path3 = os.path.join(os.path.dirname(__file__), "..", "static", "image3.png")
 # Welcome message variable
 WELCOME_MESSAGE = "Hello! Welcome to the Group Agent Chat System. Feel free to ask any questions and our agents will respond!"
 
@@ -244,20 +267,21 @@ def slow_stream(content, delay=0.05):
         yield char
         time.sleep(delay)  # Adds delay to slow down streaming
 
+lang_code = "en-US"  # Use correct language code for Azure Speech
 if selected == "chat":
     col1, col2 = st.columns([1, 8])
     with col1:
-        st.image("image3.png", use_container_width=True)  # Add your logo here
+        st.image(image_path3, use_container_width=True)  # Add your logo here
     with col2:
         st.title("Agent Group Chat")
         st.markdown('''''')
-
+    
     if st.session_state.chat is None:
         st.session_state.chat = asyncio.run(initialize_chat())
 
     # Show welcome message if no previous messages
     if "responses" not in st.session_state or not st.session_state.responses:
-        with st.chat_message("assistant", avatar=SYSTEM_LOGO):  # Avatar can be changed
+        with st.chat_message("assistant", avatar=SYSTEM_LOGO):  
             st.markdown(f"**System:**")  
             st.markdown(WELCOME_MESSAGE)
 
@@ -276,20 +300,38 @@ if selected == "chat":
                 st.markdown(f"**{role} Agent:**")  
                 st.markdown(content)
 
-    # Handle new user input
-    prompt = st.chat_input("Enter your message:")
-    
+    # Mic Button  
+    if st.button("", icon=":material/mic:", key="mic_button"):
+        # Record audio with silence detection
+        audio_path = record_audio_with_silence_detection()
+
+        # Transcribe the recorded audio
+        transcribed_text = transcribe_audio_file(audio_path)
+
+        # Delete the temporary file
+        os.remove(audio_path)
+
+        # Store transcribed text in session state
+        if transcribed_text:
+            st.session_state.transcribed_text = transcribed_text        
+
+    # Handle input from chat or voice
+    prompt = st.session_state.get("transcribed_text", None)  # ✅ Use transcribed text if available
+
+    if prompt is None:  # ✅ Only show chat input if no transcribed text
+        prompt = st.chat_input("Enter your message:", key="chat_input")
+
     if prompt:
-        # Display the new user message with the correct format
+        # Display user message
         with st.chat_message("user", avatar=USER_LOGO):
             st.markdown(f"**You:**")
             st.markdown(prompt)
 
-        # Append new user message correctly to session history
+        # Append new user message
         st.session_state.responses.append({"role": "user", "content": prompt})
         asyncio.run(st.session_state.chat.add_chat_message(message=prompt))
 
-        # Stream responses one by one using st.write_stream
+        # Process agent responses
         async def stream_agent_responses():
             async for response in st.session_state.chat.invoke():
                 if response and response.name:
@@ -303,4 +345,15 @@ if selected == "chat":
                     st.session_state.responses.append({"role": response.name, "content": response.content})
 
         asyncio.run(stream_agent_responses())
+
+        # Reset transcribed text **after processing** to prevent infinite loop
+        st.session_state.transcribed_text = None  
+
+        # Reset chat process flag
+        st.session_state.chat_process_running = False  
+
+        # Trigger rerun
         st.rerun()
+
+
+

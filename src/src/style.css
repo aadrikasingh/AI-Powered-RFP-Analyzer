@@ -1,0 +1,54 @@
+
+
+/* MIC button */
+.st-key-mic_button {
+    position: fixed;
+    bottom: 58px;
+    right: 30px;
+    z-index: 9999;
+
+
+}
+
+/* Style the button itself */
+
+
+/* Hover effect */
+.st-key-mic_button button:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 20px #166ec5;
+    
+}
+
+.st-key-mic_button button {
+    transition: all 0.3s ease-in-out;
+}
+
+.st-key-mic_button button:hover {
+    transform: scale(1.30);
+}
+
+
+
+.st-key-chat_input{
+    border-radius: 25px;
+    border: 2px solid rgb(26, 102, 225);
+    
+    transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
+    box-shadow: 0 0 7px #166ec5
+    
+    /*border: 2px solid transparent; /* Initial border */
+
+}
+.st-key-chat_input:hover {
+    border: 2px solid rgb(26, 102, 225);
+    border-color: rgb(26, 102, 225); /* Red border on hover */
+    /*background-color: #0056b3; /* Darker shade of blue on hover */
+    transform: scale(1.005); /* Slightly enlarge the button */
+    border-radius: 25px;
+    box-shadow: 0 0 30px #166ec5;
+    ;
+    
+    
+}
+

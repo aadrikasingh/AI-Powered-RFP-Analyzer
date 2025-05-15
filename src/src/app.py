@@ -40,7 +40,9 @@ def create_kernel() -> Kernel:
 # Function to extract agent prompts
 def get_agent_prompts() -> dict:
     """Loads agent prompts from a Jinja template."""
-    env = Environment(loader=FileSystemLoader("."))
+    # Path to the directory of app.py
+    script_dir = os.path.dirname(__file__)
+    env = Environment(loader=FileSystemLoader(script_dir))
     template = env.get_template("agent_prompts.jinja")
     
     try:
