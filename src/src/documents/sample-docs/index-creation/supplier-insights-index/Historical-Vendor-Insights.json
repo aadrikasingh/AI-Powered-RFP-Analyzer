@@ -1,0 +1,28 @@
+[
+  {
+    "vendor_name": "Fourth Coffee Solutions",
+    "past_clients": ["Contoso Ltd.", "Adventure Works", "AeroTech Systems"],
+    "industries_served": ["Finance", "Healthcare", "Aviation"],
+    "customer_satisfaction_avg": 88,
+    "financial_growth_5y": "Stable (4% YoY Growth)",
+    "compliance_issues": "None",
+    "market_growth": "Moderate Growth in EU & APAC",
+    "bbb_accreditation": "Accredited",
+    "contract_disputes": 0,
+    "r&d_investment": "High (15% of revenue reinvested)",
+    "notes": "Consistently ranked in top HR tech providers, stable leadership team."
+  },
+  {
+    "vendor_name": "Northwind Traders",
+    "past_clients": ["Litware Inc.", "Fabrikam", "Globe Bank"],
+    "industries_served": ["Retail", "Logistics", "Banking"],
+    "customer_satisfaction_avg": 72,
+    "financial_growth_5y": "High Growth (10% YoY)",
+    "compliance_issues": "GDPR Violation (2021) – Minor fine issued",
+    "market_growth": "Strong Expansion into Middle East & Latin America",
+    "bbb_accreditation": "Not Accredited",
+    "contract_disputes": 2,
+    "r&d_investment": "Moderate (7% of revenue reinvested)",
+    "notes": "Aggressive expansion strategy, but some compliance concerns."
+  }
+]
