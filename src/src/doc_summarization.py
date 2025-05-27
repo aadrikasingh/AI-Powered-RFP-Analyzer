@@ -6,13 +6,10 @@ from openai import AzureOpenAI
 from pydantic import BaseModel
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
-from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
 
 # Load environment variables
-# load_dotenv(override=True)
 load_dotenv()
 endpoint=os.environ["AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT"]
-# key=os.environ["AZURE_DOCUMENT_INTELLIGENCE_API_KEY"]
 key=os.environ["AZURE_DOC_INTELLIGENCE_KEY"]
 
 azure_openai_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
@@ -26,7 +23,7 @@ openai_client = AzureOpenAI(azure_endpoint=azure_openai_endpoint, api_key=azure_
 
 def analyze_document(file_obj):
     """Analyze the layout of an in-memory document using Azure Document Intelligence."""
-    file_obj.seek(0)  # Ensure the file is at the beginning
+    file_obj.seek(0)
     poller = document_intelligence_client.begin_analyze_document("prebuilt-layout", body=file_obj)
     result_json = poller.result()
     return result_json.content
@@ -131,7 +128,7 @@ def summarize_chunk(chunk, doc_type):
 def save_summary(summary, doc_type):
     """Return the summary instead of saving it locally."""
     if doc_type == "rfp":
-        return summary  # Just return the summarized text
+        return summary
 
     elif doc_type == "proposal":
         try:
@@ -156,7 +153,7 @@ def save_summary(summary, doc_type):
 
 def summarize_document(file_obj, doc_type):
     """Summarize an in-memory document without saving."""
-    analyze_result = analyze_document(file_obj)  # Now accepts file object directly
+    analyze_result = analyze_document(file_obj)
     chunks = chunk_text(analyze_result, 126000)
 
     if len(chunks) == 1:
@@ -165,4 +162,4 @@ def summarize_document(file_obj, doc_type):
         summaries = [summarize_chunk(chunk, doc_type) for chunk in chunks]
         final_summary = summarize_chunk(" ".join(summaries), doc_type)
 
-    return save_summary(final_summary, doc_type)  # Return instead of saving
+    return save_summary(final_summary, doc_type)

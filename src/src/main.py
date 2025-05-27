@@ -1,12 +1,14 @@
-import streamlit as st
-import asyncio
-from time import sleep
-from doc_summarization import summarize_document  # Ensure this function works correctly
-import uuid
+# Standard library imports
 import os
+import uuid
+from time import sleep
+
+# Third-party imports
+import streamlit as st
 from PIL import Image
 
-
+# Local application imports
+from doc_summarization import summarize_document
 
 st.markdown("""
     <style>
@@ -36,17 +38,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
 image_path1 = os.path.join(os.path.dirname(__file__), "static", "image1.png")
 LOGO_URL_LARGE = Image.open(image_path1)
-image_path2 = os.path.join(os.path.dirname(__file__), "static", "image3.png")
-#LOGO_URL_LARGE = "image1.png" 
- 
+image_path2 = os.path.join(os.path.dirname(__file__), "static", "image3.png") 
 
 st.logo(
     LOGO_URL_LARGE,
     size="large"
-    
 )
 col1, col2 = st.columns([1, 3])
 with col1:
@@ -77,7 +75,7 @@ if "chat_ready" not in st.session_state:
     st.session_state.chat_ready = False
 
 if "process_running" not in st.session_state:
-    st.session_state.process_running = False  # ✅ New flag to control rerun behavior
+    st.session_state.process_running = False
 
 # Progress Tracking (0 to 5)
 progress_stage = 0  
@@ -119,7 +117,7 @@ if not st.session_state.rfp_uploaded:
     if rfp_file:
         st.session_state.rfp_uploaded = True
         st.session_state.rfp_file = rfp_file
-        st.rerun()  # ✅ Refresh after file upload
+        st.rerun()  # Refresh after file upload
 else:
     st.success("RFP Document Uploaded!")
 
@@ -135,41 +133,41 @@ if st.session_state.rfp_uploaded:
     else:
         st.success("Vendor Proposal Document Uploaded!")
 
-# ✅ **Step 3: Multi-Agent Analysis**
+# **Step 3: Multi-Agent Analysis**
 if st.session_state.rfp_uploaded and st.session_state.vendor_uploaded:
     st.subheader("Step 3: Multi-Agent Analysis")
 
     if st.button("Analyze", icon=":material/cycle:",disabled=st.session_state.process_running, key="analyze_button"):
-        st.session_state.process_running = True  # ✅ Mark process as running
-        st.rerun()  # ✅ Rerun to trigger processing
+        st.session_state.process_running = True  # Mark process as running
+        st.rerun()  # Rerun to trigger processing
 
-# ✅ **Processing Steps (Runs After Rerun)**
+# **Processing Steps (Runs After Rerun)**
 if st.session_state.process_running:
     
-    # ✅ Step 1: Summarizing RFP
+    # Step 1: Summarizing RFP
     if not st.session_state.rfp_summary_ready:
         with st.spinner("Summarizing RFP Document..."):
             st.session_state.rfp_summary_ready = summarize_document(st.session_state.rfp_file, "rfp")
             st.rerun()
 
-    # ✅ Step 2: Summarizing Vendor Proposal
+    # Step 2: Summarizing Vendor Proposal
     if st.session_state.rfp_summary_ready and not st.session_state.vendor_summary_ready:
         with st.spinner("Summarizing Vendor Proposal Document..."):
             st.session_state.vendor_summary_ready = summarize_document(st.session_state.vendor_file, "proposal")
             st.rerun()
 
-    # ✅ Step 3: Generating Chat Instance
+    # Step 3: Generating Chat Instance
     if st.session_state.rfp_summary_ready and st.session_state.vendor_summary_ready and not st.session_state.chat_ready:
         with st.spinner("Generating Chat Instance..."):
             sleep(3)
             st.session_state.chat_ready = True
             st.rerun()
 
-    # ✅ Step 4: Redirect to Analysis Page
+    # Step 4: Redirect to Analysis Page
     if st.session_state.chat_ready:
         with st.spinner("All set..."):
             sleep(1)
         with st.spinner("Redirecting to Analysis Page..."):
             sleep(2)
-        st.session_state.process_running = False  # ✅ Reset process flag
+        st.session_state.process_running = False  # Reset process flag
         st.switch_page("pages/chat.py")

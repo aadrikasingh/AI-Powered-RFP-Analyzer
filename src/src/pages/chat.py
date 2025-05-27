@@ -1,37 +1,49 @@
-import streamlit as st
-st.set_page_config(layout="wide")
+# Standard library imports
 import asyncio
-import sys
-import os
-from time import sleep
-# Get the absolute path of the parent directory (app/)
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-import time
-from plugins.legal_compliance_plugin import LegalCompliancePlugin
-from plugins.vendor_evaluation_plugin import VendorEvaluationPlugin
-from plugins.market_intelligence_plugin import MarketIntelligencePlugin
-from app import create_kernel, get_agent_prompts, load_summaries, AgentGroupChat, ChatCompletionAgent, AGENT_NAMES
-#Myimports
 import json
+import os
+import pathlib
+import sys
+import time
+from time import sleep
+
+# Third-party imports
+import streamlit as st
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
-from jinja2 import Environment, FileSystemLoader
+from dotenv import load_dotenv
+from streamlit_option_menu import option_menu
+
+# Semantic Kernel imports
 from semantic_kernel import Kernel
 from semantic_kernel.agents import AgentGroupChat, ChatCompletionAgent
-from semantic_kernel.agents.strategies import (KernelFunctionSelectionStrategy, KernelFunctionTerminationStrategy,)
+from semantic_kernel.agents.strategies import (
+    KernelFunctionSelectionStrategy,
+    KernelFunctionTerminationStrategy,
+)
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.contents import ChatHistoryTruncationReducer
 from semantic_kernel.functions import KernelFunctionFromPrompt
-from streamlit_option_menu import option_menu
-#from speech import transcribe_real_time_audio
-import pathlib
 
-from dotenv import load_dotenv
+# Application-specific imports
+from app import (
+    create_kernel,
+    get_agent_prompts,
+    AGENT_NAMES,
+)
+from plugins.legal_compliance_plugin import LegalCompliancePlugin
+from plugins.vendor_evaluation_plugin import VendorEvaluationPlugin
+from plugins.market_intelligence_plugin import MarketIntelligencePlugin
+# from speech import transcribe_real_time_audio
+
+# Custom config
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+st.set_page_config(layout="wide")
 
 # Load environment variables
 load_dotenv()
 
-
+# Function to load CSS styles from a file
 def load_css(file_name):  
     with open(file_name) as f:  
         st.html(f"<style>{f.read()}</style>")
@@ -41,14 +53,15 @@ load_css(css_path)
 
 # Function to initialize the chat system
 async def initialize_chat():
+
     kernel = create_kernel()
     prompt_instructions = get_agent_prompts()
     rfp_summary = st.session_state.rfp_summary_ready
     proposal_summary = st.session_state.vendor_summary_ready
-    market_intelligence_dataset = os.path.join(
-    os.path.dirname(__file__), "..", "documents", "market-intelligence.json")
-    #market_intelligence_dataset = "documents/market-intelligence.json"
+    market_intelligence_dataset = os.path.join(os.path.dirname(__file__), "..", "documents", "market-intelligence.json")
     market_intelligence_dataset = os.path.abspath(market_intelligence_dataset)
+
+    ###########################################################################################
 
     # For Legal Compliance Agent...
     legal_search_client = SearchClient(endpoint=os.environ.get("AZURE_AI_SEARCH_ENDPOINT"), 
@@ -68,7 +81,7 @@ async def initialize_chat():
     market_intelligence_plugin = MarketIntelligencePlugin(market_intelligence_dataset)
     market_insights = market_intelligence_plugin.get_market_insights("Cloud Computing")
 
-
+    ###########################################################################################
 
     # Create agents
     rfp_compliance_agent = ChatCompletionAgent(
@@ -107,7 +120,8 @@ async def initialize_chat():
         instructions=f"{prompt_instructions['evaluation_report']}"
     )
 
-     ##########################################################
+    ###########################################################################################
+
     # Define a selection function to determine which agent should take the next turn.
     selection_function = KernelFunctionFromPrompt(
     function_name="selection",
@@ -223,12 +237,9 @@ with st.sidebar:
     # # Add spacing
     # st.markdown("---")
 
-
     # # New Evaluation button
     # if st.button("### 🔁 Start Over"):
     #     st.switch_page("main.py")  # Replace with your main page path or logic
-
-
 
 
 if selected == "Summaries":
@@ -256,6 +267,7 @@ AGENT_LOGOS = {
 USER_LOGO = "https://cdn.pixabay.com/photo/2016/03/31/17/33/avatar-1293744_1280.png"
 SYSTEM_LOGO = "https://cdn.pixabay.com/photo/2016/03/31/18/43/gear-1294576_1280.png"
 image_path3 = os.path.join(os.path.dirname(__file__), "..", "static", "image3.png")
+
 # Welcome message variable
 WELCOME_MESSAGE = "Hello! Welcome to the Group Agent Chat System. Feel free to ask any questions and our agents will respond!"
 
@@ -266,7 +278,7 @@ def slow_stream(content, delay=0.05):
         yield char
         time.sleep(delay)  # Adds delay to slow down streaming
 
-lang_code = "en-US"  # Use correct language code for Azure Speech
+lang_code = "en-US"
 if selected == "chat":
     col1, col2 = st.columns([1, 8])
     with col1:
@@ -302,14 +314,14 @@ if selected == "chat":
     # Handle new user input
     prompt = st.chat_input("Enter your message:", key="chat_input")
 
-    #Mic Button 
+    # Mic Button 
     
     # if st.button("", icon=":material/mic:", key="mic_button"):
         
     #     transcribe_real_time_audio(lang_code)
-    #     prompt = st.session_state.get("transcribed_text", "")  # ✅ fetch from session
+    #     prompt = st.session_state.get("transcribed_text", "")  # fetch from session
     # else:
-    #     prompt = st.chat_input("Enter your message:", key="chat_input")  # ✅ fallback to typed input
+    #     prompt = st.chat_input("Enter your message:", key="chat_input")  # fallback to typed input
         
     
     if prompt:
