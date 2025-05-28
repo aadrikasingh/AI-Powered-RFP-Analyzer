@@ -216,11 +216,9 @@ Before deploying, configure the required environment variables.
 
 📅 **Create your working `.env` file**:
 
-```
-copy src/.env.sample to src/src/.env
-```
-
-you can edit .env you created with your specific values as shown below.
+1) you will find .env.sample in src/ directory
+2) copy it inside src/src/ and rename it to .env
+3) you can edit .env you created with your specific needed values as shown below.
 
 #### ✅ Mandatory Environment Variables
 
