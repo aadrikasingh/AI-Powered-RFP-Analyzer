@@ -279,6 +279,9 @@ Once confirmed, AZD will begin provisioning the infrastructure using Bicep templ
 
 > ⏱️ Provisioning typically takes **5–10 minutes**, depending on your region and resource availability.
 
+>✅ Once the AZD template deployment completes, a URL will be displayed in your terminal output.
+You can use this URL to launch and explore the AI-Powered RFP Analyzer web application in your browser.
+
 ### 🔹 4. Removing the solution
 
 Run azd down to remove the Infra and app provioned throgh this template.
