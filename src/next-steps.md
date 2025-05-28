@@ -21,10 +21,11 @@ Configure environment variables for running services by updating `settings` in [
 
 ### Configure CI/CD pipeline
 
-1. Create a workflow pipeline file locally. The following starters are available:
-   - [Deploy with GitHub Actions](https://github.com/Azure-Samples/azd-starter-bicep/blob/main/.github/workflows/azure-dev.yml)
-   - [Deploy with Azure Pipelines](https://github.com/Azure-Samples/azd-starter-bicep/blob/main/.azdo/pipelines/azure-dev.yml)
-2. Run `azd pipeline config` to configure the deployment pipeline to connect securely to Azure.
+Run `azd pipeline config` to configure the deployment pipeline to connect securely to Azure. 
+
+- Deploying with `GitHub Actions`: Select `GitHub` when prompted for a provider. If your project lacks the `azure-dev.yml` file, accept the prompt to add it and proceed with pipeline configuration.
+
+- Deploying with `Azure DevOps Pipeline`: Select `Azure DevOps` when prompted for a provider. If your project lacks the `azure-dev.yml` file, accept the prompt to add it and proceed with pipeline configuration.
 
 ## What was added
 
@@ -33,20 +34,18 @@ Configure environment variables for running services by updating `settings` in [
 To describe the infrastructure and application, `azure.yaml` along with Infrastructure as Code files using Bicep were added with the following directory structure:
 
 ```yaml
-- azure.yaml     # azd project configuration
-- infra/         # Infrastructure as Code (bicep) files
-  - main.bicep   # main deployment module
-  - app/         # Application resource modules
-  - shared/      # Shared resource modules
-  - modules/     # Library modules
+- azure.yaml        # azd project configuration
+- infra/            # Infrastructure-as-code Bicep files
+  - main.bicep      # Subscription level resources
+  - resources.bicep # Primary resource group resources
+  - modules/        # Library modules
 ```
 
-Each bicep file declares resources to be provisioned. The resources are provisioned when running `azd up` or `azd provision`.
+The resources declared in [resources.bicep](./infra/resources.bicep) are provisioned when running `azd up` or `azd provision`.
+This includes:
 
-- [app/src.bicep](./infra/app/src.bicep) - Azure Container Apps resources to host the 'src' service.
-- [shared/keyvault.bicep](./infra/shared/keyvault.bicep) - Azure KeyVault to store secrets.
-- [shared/monitoring.bicep](./infra/shared/monitoring.bicep) - Azure Log Analytics workspace and Application Insights to log and store instrumentation logs.
-- [shared/registry.bicep](./infra/shared/registry.bicep) - Azure Container Registry to store docker images.
+
+- Azure Container App to host the 'src' service.
 
 More information about [Bicep](https://aka.ms/bicep) language.
 

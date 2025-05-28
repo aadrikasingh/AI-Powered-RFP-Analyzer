@@ -51,6 +51,8 @@ def load_css(file_name):
 css_path = pathlib.Path("style.css")
 load_css(css_path)
 
+legal_policy_index = os.getenv("LEGAL_POLICY_INDEX")
+supplier_insights_index = os.getenv("SUPPLIER_INDEX")
 # Function to initialize the chat system
 async def initialize_chat():
 
@@ -65,14 +67,14 @@ async def initialize_chat():
 
     # For Legal Compliance Agent...
     legal_search_client = SearchClient(endpoint=os.environ.get("AZURE_AI_SEARCH_ENDPOINT"), 
-                                       index_name="legal-policy-index", 
+                                       index_name=legal_policy_index, 
                                        credential=AzureKeyCredential(os.environ.get("AZURE_AI_SEARCH_API_KEY")))                      
     legal_compliance_plugin = LegalCompliancePlugin(search_client=legal_search_client, vendor_legal_summary=proposal_summary.get("legal_summary", ""))
     policy_context = await legal_compliance_plugin.check_compliance()
 
     # For Vendor Evaluation Agent...
     vendor_search_client = SearchClient(endpoint=os.environ.get("AZURE_AI_SEARCH_ENDPOINT"), 
-                                          index_name="supplier-insights-index", 
+                                          index_name=supplier_insights_index, 
                                           credential=AzureKeyCredential(os.environ.get("AZURE_AI_SEARCH_API_KEY")))
     vendor_evaluation_plugin = VendorEvaluationPlugin(search_client=vendor_search_client, vendor_name=proposal_summary.get("vendor_name", "Unknown Vendor"))
     vendor_insights = await vendor_evaluation_plugin.get_vendor_insights()
@@ -234,12 +236,6 @@ with st.sidebar:
         default_index=0,
     )
 
-    # # Add spacing
-    # st.markdown("---")
-
-    # # New Evaluation button
-    # if st.button("### 🔁 Start Over"):
-    #     st.switch_page("main.py")  # Replace with your main page path or logic
 
 
 if selected == "Summaries":
@@ -312,17 +308,7 @@ if selected == "chat":
                 st.markdown(content)
 
     # Handle new user input
-    prompt = st.chat_input("Enter your message:", key="chat_input")
-
-    # Mic Button 
-    
-    # if st.button("", icon=":material/mic:", key="mic_button"):
-        
-    #     transcribe_real_time_audio(lang_code)
-    #     prompt = st.session_state.get("transcribed_text", "")  # fetch from session
-    # else:
-    #     prompt = st.chat_input("Enter your message:", key="chat_input")  # fallback to typed input
-        
+    prompt = st.chat_input("Enter your message:", key="chat_input")      
     
     if prompt:
         # Display the new user message with the correct format

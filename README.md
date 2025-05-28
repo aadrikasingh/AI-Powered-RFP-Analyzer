@@ -175,24 +175,117 @@ Follow these steps to deploy the solution using AZD:
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
 - The accelerator expects two vector-indexes created on Azure AI Search to facilitate the run of *Legal Compliance Agent* and *Vendor Evaluation Agent*, named *legal-policy-index* and *supplier-insights-index* respectively. Please customize and create them per your use-case data or use the sample documents available under src/documents/sample-docs/index-creation.
 
-### 2. Clone the Repository
+## 🚀 Step-by-Step Deployment
+
+Follow the instructions below to deploy the **AI-Powered RFP Analyzer** into your Azure environment using [Azure Developer CLI (AZD)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd). This guide ensures a clean and repeatable deployment flow.
+
+---
+
+### 🔹 1. Clone the Repository
+
+Start by cloning the repository to your local machine:
 
 ```bash
-# Clone the repository
 git clone https://github.com/aadrikasingh/AI-Powered-RFP-Analyzer.git
-cd into the clones repo (AI-Powered-RFP-Analyzer)
+cd AI-Powered-RFP-Analyzer
+```
 
-# Login to Azure
+---
+
+### 🔹 2. Log in to Azure
+
+Ensure you're authenticated with your Azure account via the Azure CLI:
+
+```bash
 az login
+```
 
-# Initialize AZD environment (optional to specify a name)
+This will open a browser window prompting you to sign in with your Azure credentials.
+
+> ✨ **Note**: If the browser does not open automatically, copy the provided URL and paste it into your browser manually. Then enter the one-time code shown in your terminal.
+
+Once authenticated, your terminal will confirm your login and list the available subscriptions.
+
+---
+
+### 🔹 3. Set Up Environment Variables
+
+Before deploying, configure the required environment variables.
+
+📄 **Sample file location**:`src/.env.sample`
+
+📅 **Create your working `.env` file**:
+
+```bash
+cp src/.env.sample src/src/.env
+```
+
+This will generate a `.env` file you can edit with your specific values.
+
+#### ✅ Mandatory Environment Variables
+
+| Variable Name              | Description                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------- |
+| `AZURE_AI_SEARCH_ENDPOINT` | The endpoint URL of your Azure AI Search instance                                |
+| `AZURE_AI_SEARCH_API_KEY`  | Admin or query key for your Azure AI Search instance                             |
+| `LEGAL_POLICY_INDEX`       | Name of the index containing legal/policy documents (e.g., `legal-policy-index`) |
+| `SUPPLIER_INDEX`           | Name of the supplier insights index (e.g., `supplier-insights-index`)            |
+
+> 💡 You can use the provided default values in `.env.sample` if you have matching indexes already created in your Azure AI Search resource.
+
+---
+
+### 🔹 4. Initialize and Deploy the Environment
+
+Use the Azure Developer CLI to initialize and deploy your solution.
+
+#### 🛠️ Initialize the AZD Environment
+
+```bash
 azd init
-azd env new <environment-name>  # Optional
+```
 
-# Deploy the solution
+You will be prompted to enter an environment name. This name will be used as a prefix for all provisioned Azure resources.
+
+> 📌 **Example**:> If you enter `dev`, your container app name might look like `ca-dev-hlukwx2gjy4lo`, where:
+>
+> - `ca` = Container App
+> - `dev` = Environment name
+> - `hlukwx2gjy4lo` = Random string for uniqueness
+
+---
+
+#### 🚀 Deploy the Solution
+
+```bash
 azd up
 ```
----
+
+You will be prompted to:
+
+1. Select an Azure Subscription to use for deployment.
+2. Select a deployment region.
+
+> 🌍 **Recommended Region**: Use a region that supports all required services, such as **Sweden Central**.
+
+Once confirmed, AZD will begin provisioning the infrastructure using Bicep templates. This includes:
+
+- Azure Container Apps
+- Azure OpenAI (OpenAI will provision two models: text-embedding-ada-002 and gpt-4o. Both models will have 10,000 TPM. If you want to change this value, go to the OpenAI Bicep module and decrease the capacity number in the model's SKU configuration)
+- Azure AI Search (if you are using an exisiting Ai search service then you can remove the Ai search provioned thourgh bicep template)
+- Azure Document Intelligence
+- Azure Container Registry (ACR)
+- Monitoring (Log Analytics & Application Insights)
+
+> ⏱️ Provisioning typically takes **5–10 minutes**, depending on your region and resource availability.
+
+### 🔹 4. Removing the solution
+
+Run azd down to remove the Infra and app provioned throgh this template.
+
+```bash
+azd down
+```
 
 ## 🤝 Contributing
 

@@ -12,7 +12,7 @@ resource openai 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
     apiProperties: {
       kind: 'OpenAI'
     }
-    customSubDomainName: name // 👈 Forces OpenAI custom endpoint
+    customSubDomainName: name 
     publicNetworkAccess: 'Enabled'
   }
 }
@@ -22,7 +22,7 @@ resource gpt4Deployment 'Microsoft.CognitiveServices/accounts/deployments@2024-1
   name: 'gpt-4o'
   sku: {
     name: 'Standard'
-    capacity: 1
+    capacity: 10
   }
   properties: {
     model: {
@@ -40,7 +40,7 @@ resource embeddingDeployment 'Microsoft.CognitiveServices/accounts/deployments@2
   name: 'text-embedding-ada-002'
   sku: {
     name: 'Standard'
-    capacity: 1
+    capacity: 10
   }
   properties: {
     model: {
@@ -60,3 +60,4 @@ output openAiEndpoint string = openai.properties.endpoint
 output openAiKey string = listKeys(openai.id, openai.apiVersion).key1
 output chatDeploymentName string = gpt4Deployment.name
 output embeddingDeploymentName string = embeddingDeployment.name
+

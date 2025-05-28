@@ -9,6 +9,3 @@ azure-ai-documentintelligence
 azure-search-documents==11.6.0b7
 streamlit-option-menu
 azure-cognitiveservices-speech
-# pyaudio 
-# numpy 
-# soundfile

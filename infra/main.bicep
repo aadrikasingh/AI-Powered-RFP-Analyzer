@@ -45,17 +45,6 @@ module monitoring './shared/monitoring.bicep' = {
   scope: rg
 }
 
-// module dashboard './shared/dashboard-web.bicep' = {
-//   name: 'dashboard'
-//   params: {
-//     name: '${abbrs.portalDashboards}${resourceToken}'
-//     applicationInsightsName: monitoring.outputs.applicationInsightsName
-//     location: location
-//     tags: tags
-//   }
-//   scope: rg
-// }
-
 module registry './shared/registry.bicep' = {
   name: 'registry'
   params: {
@@ -85,16 +74,7 @@ module documentIntelligence './shared/intelligence.bicep' = {
     location: location
   }
 }
-// module keyVault './shared/keyvault.bicep' = {
-//   name: 'keyvault'
-//   params: {
-//     location: location
-//     tags: tags
-//     name: '${abbrs.keyVaultVaults}${resourceToken}'
-//     principalId: principalId
-//   }
-//   scope: rg
-// }
+
 
 module appsEnv './shared/apps-env.bicep' = {
   name: 'apps-env'
@@ -176,28 +156,16 @@ module src './app/src.bicep' = {
     documentIntelligence
     registry
     appsEnv
-    monitoring
   ]
   scope: rg
 }
 
 
 
-
-
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = registry.outputs.loginServer
-//output AZURE_KEY_VAULT_NAME string = keyVault.outputs.name
-//output AZURE_KEY_VAULT_ENDPOINT string = keyVault.outputs.endpoint
-
-
-//openai
-
-
 output AZURE_OPENAI_ENDPOINT string = openai.outputs.openAiEndpoint
 output AZURE_OPENAI_API_KEY string = openai.outputs.openAiKey
 output AZURE_OPENAI_CHAT_DEPLOYMENT_NAME string = openai.outputs.chatDeploymentName
 output AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME string = openai.outputs.embeddingDeploymentName
-
-
 output AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT string = documentIntelligence.outputs.documentIntelligenceEndpoint
 output AZURE_DOC_INTELLIGENCE_KEY string = documentIntelligence.outputs.documentIntelligenceKey
