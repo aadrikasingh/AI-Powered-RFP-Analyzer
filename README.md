@@ -185,7 +185,7 @@ Follow the instructions below to deploy the **AI-Powered RFP Analyzer** into you
 
 Start by cloning the repository to your local machine:
 
-```bash
+```terminal
 git clone https://github.com/aadrikasingh/AI-Powered-RFP-Analyzer.git
 cd AI-Powered-RFP-Analyzer
 ```
@@ -196,7 +196,7 @@ cd AI-Powered-RFP-Analyzer
 
 Ensure you're authenticated with your Azure account via the Azure CLI:
 
-```bash
+```terminal
 az login
 ```
 
@@ -216,11 +216,11 @@ Before deploying, configure the required environment variables.
 
 📅 **Create your working `.env` file**:
 
-```bash
-cp src/.env.sample src/src/.env
+```
+copy src/.env.sample to src/src/.env
 ```
 
-This will generate a `.env` file you can edit with your specific values.
+you can edit .env you created with your specific values as shown below.
 
 #### ✅ Mandatory Environment Variables
 
@@ -241,7 +241,7 @@ Use the Azure Developer CLI to initialize and deploy your solution.
 
 #### 🛠️ Initialize the AZD Environment
 
-```bash
+```terminal
 azd init
 ```
 
@@ -257,7 +257,7 @@ You will be prompted to enter an environment name. This name will be used as a p
 
 #### 🚀 Deploy the Solution
 
-```bash
+```terminal
 azd up
 ```
 
@@ -286,7 +286,7 @@ You can use this URL to launch and explore the AI-Powered RFP Analyzer web appli
 
 Run azd down to remove the Infra and app provioned throgh this template.
 
-```bash
+```terminal
 azd down
 ```
 
