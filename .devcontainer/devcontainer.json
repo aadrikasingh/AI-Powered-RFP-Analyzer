@@ -1,0 +1,19 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {
+      "installBicep": true
+    },
+    "ghcr.io/azure/azure-dev/azd:0": {}
+  },
+  "customizations": {
+      "vscode": {
+          "extensions": [
+              "ms-vscode.vscode-node-azure-pack",
+              "GitHub.copilot",
+              "github.copilot-chat",
+              "ms-python.python"
+          ]
+      }
+  }
+}
