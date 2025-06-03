@@ -11,7 +11,8 @@
           "extensions": [
               "ms-vscode.vscode-node-azure-pack",
               "GitHub.copilot",
-              "github.copilot-chat"
+              "github.copilot-chat",
+              "ms-python.python"
           ]
       }
   }
