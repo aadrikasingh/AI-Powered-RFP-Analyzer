@@ -243,12 +243,20 @@ if selected == "Summaries":
     with tab1:
         if st.session_state.rfp_summary_ready:
             st.subheader("📄")
-            st.write(st.session_state.rfp_summary_ready)
+            st.markdown(st.session_state.rfp_summary_ready)
 
     with tab2:
         if st.session_state.vendor_summary_ready:
             st.subheader("📄 ")
-            st.write(st.session_state.vendor_summary_ready)
+            vendor_summary = st.session_state.vendor_summary_ready
+            st.markdown(
+            f"""
+            | **Vendor Name**  | {vendor_summary.get('vendor_name', '')}    |
+            |------------------|--------------------------------------------|
+            | **Legal Summary**| {vendor_summary.get('legal_summary', '')}  |
+            | **Overall Summary** | {vendor_summary.get('overall_summary', '')} |
+            """
+            )
 
 # Define agent logos (ensures correct representation)
 AGENT_LOGOS = {
