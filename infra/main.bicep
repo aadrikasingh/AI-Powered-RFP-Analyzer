@@ -28,6 +28,9 @@ var tags = {
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 
+// The container registry name must not contain dashes (-) specially the environment name as the service does not allow dashes in the name.
+var containerRegistryName = replace(toLower('${abbrs.containerRegistryRegistries}-${environmentName}-${resourceToken}'), '-', '')
+
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   name: '${abbrs.resourcesResourceGroups}-${environmentName}-${resourceToken}'
   location: location
@@ -51,7 +54,7 @@ module registry './shared/registry.bicep' = {
     location: location
     tags: tags
     //no dashes (-) in the name as the service dont allow dashes in the name
-    name: '${abbrs.containerRegistryRegistries}${environmentName}${resourceToken}'
+    name: containerRegistryName
   }
   scope: rg
 }
